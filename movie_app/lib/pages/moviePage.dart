@@ -1,8 +1,13 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:movie_app/Fetch/fetchPictures.dart';
 import 'package:movie_app/fetch/fetchActors.dart';
+import 'package:movie_app/pages/actorPage.dart';
 import 'package:movie_app/pages/mainPage.dart';
 import '../constants/consts.dart';
+import '../fetch/fetchActorData.dart';
+import '../fetch/fetchActorImages.dart';
 
 Color color = Colors.white;
 List pictures = [];
@@ -19,7 +24,6 @@ class moviePage extends StatefulWidget {
     required this.voteCount,
     required this.voteAverage,
     required this.id,
-    // required this.pictures,
   });
 
   late final String title;
@@ -172,20 +176,44 @@ class _moviePageState extends State<moviePage> {
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Container(
-                  child: Row(
-                    children: [
-                      ...List.of(List.generate(
-                          text == 'Pictures' ? pictures.length : actors.length,
-                          (index) => Image(
-                              image: text == 'Pictures'
-                                  ? NetworkImage(
-                                      'https://image.tmdb.org/t/p/w300${pictures[index]['file_path']}')
-                                  : NetworkImage(
-                                      'https://image.tmdb.org/t/p/w300${actors[index]['profile_path']}'))))
-                    ],
-                  ),
-                ),
-              )
+                    child: Row(children: [
+                  ...List.of(List.generate(
+                    text == 'Pictures' ? pictures.length : actors.length,
+                    (index) => text == 'Pictures'
+                        ? Image(
+                            image: NetworkImage(
+                                'https://image.tmdb.org/t/p/w300${pictures[index]['file_path']}'))
+                        : InkWell(
+                            onTap: () async {
+                              String name =
+                                  await getActor(actors[index]['id'], 'name');
+                              String photo = await getActor(
+                                  actors[index]['id'], 'profile_path');
+                              String birthday = await getActor(
+                                  actors[index]['id'], 'birthday');
+                              dynamic deathday = await getActor(
+                                  actors[index]['id'], 'deathday');
+                             String image = await getActorImages(actors[index]['id']);
+                             String text = await getActor(actors[index]['id'],'biography');
+                              if (!mounted) return;
+                              Navigator.of(context)
+                                  .push(MaterialPageRoute(builder: (context) {
+                                return actorPage(
+                                  name: name,
+                                  photo: photo,
+                                  birthday: birthday,
+                                  deathday: deathday,
+                                  backgroundImage: image,
+                                  text: text,
+                                );
+                              }));
+                            },
+                            child: Image(
+                                image: NetworkImage(
+                                    'https://image.tmdb.org/t/p/w300${actors[index]['profile_path']}'))),
+                  ))
+                ])),
+              ),
             ],
           ),
         )));

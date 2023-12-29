@@ -24,7 +24,11 @@ fetchMovie.dart: _API call for retrieving details of a specific movie, triggered
 fetchPictures.dart: 
 _API call for fetching images related to a selected movie._
 
-fetchActors.dart:_API call to gather information about the cast of a chosen movie, primarily utilized for obtaining their images._
+fetchActors.dart: _API call to gather information about the cast of a chosen movie, primarily utilized for obtaining their images._
+
+fetchActorImages.dart: _API call to take pictures of an actor_
+
+fetchActorData.dart: _API call to gather information about an actor_
 
 * Pages
 
@@ -33,6 +37,8 @@ mainPage.dart: _Contains the core code, API calls, and other elements necessary 
 moviePage.dart: _Comprises the essential code and API calls required to display detailed information about a specific movie._
 
 searchPage.dart: _Encompasses the necessary code and API calls for the search page to function seamlessly._
+
+actorPage.dart: _Contains API call to take all the info about the actors e.g. their birth date, death date, biography_
 
 * Main
 main.dart: _The main entry point that launches all the code and files, initializing the application._
