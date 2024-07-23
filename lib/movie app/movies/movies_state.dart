@@ -17,8 +17,7 @@ class MoviesLoaded extends MoviesState {
       {required this.genreMovies,
       required this.genres,
       required this.topRatedMovies,
-      required this.trendingMovies
-      });
+      required this.trendingMovies});
 }
 
 class MoviesError extends MoviesState {

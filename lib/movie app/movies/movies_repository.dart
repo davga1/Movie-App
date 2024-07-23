@@ -67,4 +67,49 @@ class MovieRepository {
     final List<dynamic> results = decodedJson['results'];
     return results.map((movie) => Movie.fromJson(movie)).toList();
   }
+
+  Future<Map<String, dynamic>> getMovie(movieId) async {
+    final response = await http.get(
+      Uri.parse('$baseUrl$movieId'),
+      headers: {
+        'Authorization': authorization,
+        'accept': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> decodedJson = jsonDecode(response.body);
+      return decodedJson;
+    } else {
+      throw Exception('Failed to load movie');
+    }
+  }
+
+  Future<Map<String, dynamic>> getCastAndDirectors(int movieId) async {
+    final response = await http.get(Uri.parse('$baseUrl$movieId/credits'),
+        headers: {
+          'Authorization': authorization,
+          'accept': 'application/json'
+        });
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> decodedJson = jsonDecode(response.body);
+      return decodedJson;
+    } else {
+      throw Exception('Failed to load movie');
+    }
+  }
+
+  Future<Map<String,dynamic>> searchMovies(String query,int page) async {
+    final response = await http.get(Uri.parse('https://api.themoviedb.org/3/search/movie?query=$query&page=$page'),
+        headers: {
+          'Authorization': authorization,
+          'accept': 'application/json'
+        });
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> decodedJson = jsonDecode(response.body);
+      return decodedJson;
+    } else {
+      throw Exception('Failed to load movie');
+    }
+  }
 }

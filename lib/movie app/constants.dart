@@ -1,3 +1,3 @@
 String imagePath = 'https://image.tmdb.org/t/p/w500';
 
-String authorization = 'AUTH CODE FROM TMDB';
+String authorization = 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyNTE3ZTFlNjNhY2M3ZTAxYjYwMmVjYTk3YTA2NGQ5OSIsInN1YiI6IjY0NzhhMDFmMGUyOWEyMDBkY2I5OWIxYiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.e3Bn2LcLyc7Jgyg8n7tx6Zy1o-Z42uDBX2PKBOGZhwQ';

@@ -38,6 +38,7 @@ dependencies:
   flutter_bloc: ^8.1.6
   http: ^0.13.3
   shimmer: ^2.0.0
+  readmore:
 
 dev_dependencies:
   flutter_test:
