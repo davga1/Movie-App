@@ -5,13 +5,15 @@ import 'package:bloc_test/main.dart';
 import 'package:bloc_test/movie%20app/movies/movies_bloc.dart';
 import 'package:bloc_test/movie%20app/movies/movies_model.dart';
 import 'package:bloc_test/movie%20app/movies/movies_repository.dart';
+import 'package:easy_debounce_throttle/throttle/easy_throttle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../widgets/scrollingWidgetWithMovies.dart';
-
+final EasyThrottle _easyThrottle = EasyThrottle(delay: const Duration(milliseconds: 1000));
+final TextEditingController _textController = TextEditingController();
 Widget searchedMovies = const SizedBox();
-
+String query = '';
 String truncateName(String name, int maxLength) {
   if (name.length > maxLength) {
     return '${name.substring(0, maxLength - 3)}...';
@@ -46,7 +48,151 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void initState() {
     _fetchGenres();
+    _textController.addListener((){
+      textListener();
+      _easyThrottle.throttle(_textController.text);
+    });
     super.initState();
+  }
+
+  void textListener(){
+    if(_textController.text.isEmpty){
+      setState(() {
+        searchedMovies = const SizedBox();
+      });
+    } else {
+        setState(() {
+          query = _textController.text;
+        });
+        {
+          MovieRepository()
+              .searchMovies(_textController.text, 1)
+              .then((searchResults) {
+            if (searchResults.isNotEmpty) {
+              setState(() {
+                searchedMovies = Column(
+                  children: [
+                    ...List.generate(
+                      2,
+                          (index) {
+                        final movie =
+                        searchResults['results']
+                        [index];
+                        final imageUrl = movie[
+                        'backdrop_path'] !=
+                            null
+                            ? '$imagePath${movie['backdrop_path']}'
+                            : null;
+
+                        return GestureDetector(
+                          child: Column(
+                            children: [
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              Container(
+                                decoration:
+                                BoxDecoration(
+                                  color: Colors.white12,
+                                  borderRadius:
+                                  BorderRadius
+                                      .circular(10),
+                                ),
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      width: 85,
+                                      height: 85,
+                                      padding:
+                                      const EdgeInsets
+                                          .all(8),
+                                      child: imageUrl !=
+                                          null
+                                          ? Container(
+                                        decoration:
+                                        BoxDecoration(
+                                          borderRadius:
+                                          BorderRadius.circular(10),
+                                          image:
+                                          DecorationImage(
+                                            image:
+                                            NetworkImage(imageUrl),
+                                            fit: BoxFit
+                                                .cover,
+                                          ),
+                                        ),
+                                      )
+                                          : Container(
+                                        decoration:
+                                        BoxDecoration(
+                                          borderRadius:
+                                          BorderRadius.circular(10),
+                                          color: Colors
+                                              .grey,
+                                        ),
+                                        child:
+                                        const Icon(
+                                          Icons
+                                              .image_not_supported,
+                                          color: Colors
+                                              .white,
+                                        ),
+                                      ),
+                                    ),
+                                    Column(
+                                      crossAxisAlignment:
+                                      CrossAxisAlignment
+                                          .start,
+                                      children: [
+                                        Text(
+                                          movie[
+                                          'title'],
+                                          style: const TextStyle(
+                                              color: Colors
+                                                  .white),
+                                        ),
+                                        Text(
+                                          '${movie['release_date'].toString().substring(0, 4)} • ${genreMap[movie['genre_ids'][0]] ?? 'Unknown'}',
+                                          style: const TextStyle(
+                                              color: Colors
+                                                  .white54),
+                                        ),
+                                        Text(
+                                          '⭐${movie['vote_average'].toStringAsFixed(1)}/10',
+                                          style: const TextStyle(
+                                              color: Colors
+                                                  .white),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
+                          onTap:
+                              () =>
+                              MovieRepository()
+                                  .getMovie(
+                                  movie['id'])
+                                  .then(
+                                    (movie) => Navigator.of(
+                                    context)
+                                    .push(MaterialPageRoute(
+                                    builder: (context) => MovieDetails(
+                                      movie: movie,
+                                    ))),
+                              ),
+                        );
+                      },
+                    )
+                  ],
+                );
+              });
+            }
+          });
+        }
+      }
   }
 
   _fetchGenres() async {
@@ -55,6 +201,12 @@ class _MainScreenState extends State<MainScreen> {
       genres = fetchedGenres;
       genreMap = {for (var genre in genres) genre['id']: genre['name']};
     });
+  }
+
+  @override
+  void dispose() {
+    _textController.dispose();
+    super.dispose();
   }
 
   @override
@@ -90,146 +242,13 @@ class _MainScreenState extends State<MainScreen> {
                     ),
                     const SizedBox(height: 20),
                     Padding(
-                        padding: EdgeInsets.only(right: 20),
+                        padding: const EdgeInsets.only(right: 20),
                         child: Column(
                           children: [
                             TextField(
                               style: const TextStyle(color: Colors.white),
-                              onChanged: (value) {
-                                if (value.isEmpty) {
-                                  setState(() {
-                                    searchedMovies = const SizedBox();
-                                  });
-                                } else {
-                                  MovieRepository()
-                                      .searchMovies(value, 1)
-                                      .then((searchResults) {
-                                    if (searchResults.isNotEmpty) {
-                                      setState(() {
-                                        searchedMovies = Column(
-                                          children: [
-                                            ...List.generate(
-                                              2,
-                                              (index) {
-                                                final movie =
-                                                    searchResults['results']
-                                                        [index];
-                                                final imageUrl = movie[
-                                                            'backdrop_path'] !=
-                                                        null
-                                                    ? '$imagePath${movie['backdrop_path']}'
-                                                    : null;
-
-                                                return GestureDetector(
-                                                  child: Column(
-                                                    children: [
-                                                      const SizedBox(
-                                                        height: 5,
-                                                      ),
-                                                      Container(
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          color: Colors.white12,
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(10),
-                                                        ),
-                                                        child: Row(
-                                                          children: [
-                                                            Container(
-                                                              width: 85,
-                                                              height: 85,
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .all(8),
-                                                              child: imageUrl !=
-                                                                      null
-                                                                  ? Container(
-                                                                      decoration:
-                                                                          BoxDecoration(
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(10),
-                                                                        image:
-                                                                            DecorationImage(
-                                                                          image:
-                                                                              NetworkImage(imageUrl),
-                                                                          fit: BoxFit
-                                                                              .cover,
-                                                                        ),
-                                                                      ),
-                                                                    )
-                                                                  : Container(
-                                                                      decoration:
-                                                                          BoxDecoration(
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(10),
-                                                                        color: Colors
-                                                                            .grey,
-                                                                      ),
-                                                                      child:
-                                                                          const Icon(
-                                                                        Icons
-                                                                            .image_not_supported,
-                                                                        color: Colors
-                                                                            .white,
-                                                                      ),
-                                                                    ),
-                                                            ),
-                                                            Column(
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .start,
-                                                              children: [
-                                                                Text(
-                                                                  movie[
-                                                                      'title'],
-                                                                  style: const TextStyle(
-                                                                      color: Colors
-                                                                          .white),
-                                                                ),
-                                                                Text(
-                                                                  '${movie['release_date'].toString().substring(0, 4)} • ${genreMap[movie['genre_ids'][0]] ?? 'Unknown'}',
-                                                                  style: const TextStyle(
-                                                                      color: Colors
-                                                                          .white54),
-                                                                ),
-                                                                Text(
-                                                                  '⭐${movie['vote_average'].toStringAsFixed(1)}/10',
-                                                                  style: const TextStyle(
-                                                                      color: Colors
-                                                                          .white),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      )
-                                                    ],
-                                                  ),
-                                                  onTap:
-                                                      () =>
-                                                          MovieRepository()
-                                                              .getMovie(
-                                                                  movie['id'])
-                                                              .then(
-                                                                (movie) => Navigator.of(
-                                                                        context)
-                                                                    .push(MaterialPageRoute(
-                                                                        builder: (context) => MovieDetails(
-                                                                              movie: movie,
-                                                                            ))),
-                                                              ),
-                                                );
-                                              },
-                                            )
-                                          ],
-                                        );
-                                      });
-                                    }
-                                  });
-                                }
-                              },
                               keyboardType: TextInputType.text,
+                              controller: _textController,
                               decoration: InputDecoration(
                                 hintStyle: const TextStyle(color: Colors.grey),
                                 hintText: 'Search',
