@@ -4,7 +4,7 @@ part of 'movies_bloc.dart';
 sealed class MoviesEvent {}
 
 class FetchMovies extends MoviesEvent {
-  String genre;
+  final String genre;
 
   FetchMovies(this.genre);
 }
