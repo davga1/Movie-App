@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
-
 import '../movie app/app screens/bottom_nav_bar_screens/main_screen.dart';
 import '../movie app/app screens/movie_details.dart';
 import '../movie app/constants.dart';
+import '../movie app/functions.dart';
 import '../movie app/movies/movies_model.dart';
 import '../movie app/movies/movies_repository.dart';
 

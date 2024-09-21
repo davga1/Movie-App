@@ -1,11 +1,13 @@
-import 'package:bloc_test/movie%20app/constants.dart';
-import 'package:bloc_test/movie%20app/movies/movies_repository.dart';
 import 'package:flutter/material.dart';
-
+import 'package:bloc_test/movie%20app/constants.dart';
 import '../movies/movies_model.dart';
 
 class PageWithMoviesList extends StatefulWidget {
-  const PageWithMoviesList({required this.title,required this.movies, super.key});
+  const PageWithMoviesList({
+    required this.title,
+    required this.movies,
+    super.key,
+  });
 
   final List<Movie> movies;
   final String title;
@@ -16,46 +18,48 @@ class PageWithMoviesList extends StatefulWidget {
 
 class _PageWithMoviesListState extends State<PageWithMoviesList> {
   @override
-  void initState() {
-    super.initState();
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      appBar: _buildAppBar(),
+      body: widget.movies.isNotEmpty ? _buildMoviesList() : _buildEmptyState(),
+    );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return widget.movies.isNotEmpty
-        ? Scaffold(
-            backgroundColor: Colors.black,
-            appBar: AppBar(
-              backgroundColor: Colors.black,
-              foregroundColor: Colors.white,
-              title: Text(
-                widget.title,
-                style: TextStyle(color: Colors.blue),
-              ),
-            ),
-            body: SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              child: Column(
-                children: [
-                  ...List.generate(
-                      widget.movies.length,
-                      (index) => ListTile(
-                            leading: CircleAvatar(
-                                backgroundImage: NetworkImage(
-                                    '$imagePath${widget.movies[index].backdrop_path}')),
-                            title: Text(
-                              widget.movies[index].title,
-                              style: const TextStyle(color: Colors.white),
-                            ),
-                          ))
-                ],
-              ),
-            ),
-          )
-        : const Scaffold(
-            body: Center(
-              child: Text('Nothing here'),
-            ),
-          );
+  AppBar _buildAppBar() {
+    return AppBar(
+      backgroundColor: Colors.black,
+      foregroundColor: Colors.white,
+      title: Text(
+        widget.title,
+        style: const TextStyle(color: Colors.blue),
+      ),
+    );
+  }
+
+  Widget _buildMoviesList() {
+    return SingleChildScrollView(
+      child: Column(
+        children: widget.movies.map((movie) => _buildMovieTile(movie)).toList(),
+      ),
+    );
+  }
+
+  Widget _buildMovieTile(Movie movie) {
+    return ListTile(
+      leading: CircleAvatar(
+        backgroundImage: NetworkImage('$imagePath${movie.backdrop_path}'),
+      ),
+      title: Text(
+        movie.title,
+        style: const TextStyle(color: Colors.white),
+      ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return const Center(
+      child: Text('Nothing here', style: TextStyle(color: Colors.white)),
+    );
   }
 }

@@ -1,4 +1,4 @@
-import 'package:bloc_test/movie%20app/app%20screens/login_page.dart';
+import 'package:bloc_test/movie%20app/app%20screens/sign_in.dart';
 import 'package:bloc_test/movie%20app/app%20screens/movie_details.dart';
 import 'package:bloc_test/movie%20app/app%20screens/page_with_movies_list.dart';
 import 'package:bloc_test/movie%20app/constants.dart';
@@ -13,13 +13,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../widgets/scrollingWidgetWithMovies.dart';
 
 Widget searchedMovies = const SizedBox();
-
-String truncateName(String name, int maxLength) {
-  if (name.length > maxLength) {
-    return '${name.substring(0, maxLength - 3)}...';
-  }
-  return name;
-}
 
 class MainScreen extends StatefulWidget {
   const MainScreen({
@@ -334,8 +327,7 @@ class _MainScreenState extends State<MainScreen> {
                   TextButton(
                       onPressed: () {
                         MovieRepository().fetchMovies('top_rated').then(
-                            (value) =>
-                                Navigator.of(context).push(MaterialPageRoute(
+                            (value) => Navigator.of(context).push(MaterialPageRoute(
                                   builder: (context) => PageWithMoviesList(
                                     title: 'Top Rated',
                                     movies: value,
@@ -418,7 +410,7 @@ class _MainScreenState extends State<MainScreen> {
               ..add(FetchMoviesWithGenreId(genreId));
           });
           Navigator.of(context).pushReplacement(MaterialPageRoute(
-            builder: (context) => const LoginPage(),
+            builder: (context) => const SignInPage(),
           ));
         },
       ),

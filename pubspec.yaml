@@ -42,6 +42,10 @@ dependencies:
   easy_debounce_throttle: ^1.0.0+5
   shared_preferences:
   font_awesome_flutter: ^10.7.0
+  firebase_core:
+  firebase_auth:
+  firebase_storage:
+  google_sign_in:
 
 dev_dependencies:
   flutter_test:

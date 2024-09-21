@@ -5,12 +5,8 @@ import 'package:readmore/readmore.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../constants.dart';
+import '../functions.dart';
 
-String durationToString(int minutes) {
-  var d = Duration(minutes: minutes);
-  List<String> parts = d.toString().split(':');
-  return '${parts[0]} hr ${parts[1]} min';
-}
 
 class MovieDetails extends StatefulWidget {
   final Map<String, dynamic> movie;

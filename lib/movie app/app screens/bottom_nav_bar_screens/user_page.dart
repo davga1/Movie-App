@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 
 class UserPage extends StatelessWidget {
-  const UserPage({super.key});
+  const UserPage({required this.email, super.key});
+
+  final String email;
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(body: Center(child: Text('Nothing for now'),),);
+    return Scaffold(
+      body: Center(
+        child: Text(email),
+      ),
+    );
   }
 }
